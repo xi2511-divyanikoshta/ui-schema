@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "autoscaling": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "maxReplicas": {
+          "type": "number"
+        },
+        "minReplicas": {
+          "type": "number"
+        },
+        "targetCPUUtilizationPercentage": {
+          "type": "number"
+        }
+      }
+    },
+    "fullnameOverride": {
+      "type": "string"
+    },
+    "istio": {
+      "type": "object",
+      "properties": {
+        "authorizationPolicy": {
+          "type": "object",
+          "properties": {
+            "allowednamespaces": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "enabled": {
+              "type": "boolean"
+            }
+          }
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "gateway": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "ingressHost": {
+              "type": "string"
+            },
+            "portName": {
+              "type": "string"
+            },
+            "portNumber": {
+              "type": "number"
+            },
+            "protocol": {
+              "type": "string"
+            }
+          }
+        },
+        "virtualService": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "host": {
+              "type": "string"
+            },
+            "timeout": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

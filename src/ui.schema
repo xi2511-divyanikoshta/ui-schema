@@ -1,0 +1,677 @@
+{
+    "vars": [
+        {
+            "section": "Basic Detail",
+            "sectionDec": "Basic Details",
+            "expand": true,
+            "type": "input_block",
+            "id": "basic_Detail",
+            "fields": [
+                {
+                    "component": "input",
+                    "label": "Project Name",
+                    "type": "text",
+                    "defaultValue": "",
+                    "id": "project_name",
+                    "hint": "Project name",
+                    "store": "project"
+                },
+                {
+                    "component": "input",
+                    "label": "Fullname Override",
+                    "defaultValue": "",
+                    "type": "text",
+                    "id": "fullnameOverride",
+                    "hint": "Fullname Override",
+                    "store": "fullnameOverride"
+                },
+                {
+                    "component": "input",
+                    "label": "Environment",
+                    "type": "text",
+                    "defaultValue": "",
+                    "id": "environment",
+                    "hint": "add environment",
+                    "store": "environment"
+                },
+                {
+                    "component": "input",
+                    "label": "Namespace",
+                    "type": "text",
+                    "defaultValue": "",
+                    "id": "namespace",
+                    "hint": "add namespace",
+                    "store": "namespace"
+                }
+            ]
+        },
+        {
+            "section": "Deployment Configuration",
+            "sectionDec": "Deployment Configuration",
+            "expand": true,
+            "type": "input_block",
+            "id": "deployment_config",
+            "fields": [
+                {
+                    "component": "input",
+                    "label": "Component",
+                    "type": "text",
+                    "defaultValue": "",
+                    "id": "component",
+                    "hint": "add component eg. (database, server, api, library)",
+                    "store": "deployment.component"
+                },
+                {
+                    "component": "object_group",
+                    "header": "Container Port",
+                    "id": "containerPort",
+                    "store": "deployment.containerPort",
+                    "defaultValue": {
+                        "http": 80
+                    },
+                    "fields": {
+                        "key": {
+                            "component": "input",
+                            "label": "Key",
+                            "type": "text",
+                            "defaultValue": "http",
+                            "id": "deployment_containerPort_key",
+                            "hint": "add key here",
+                            "store": "key"
+                        },
+                        "value": {
+                            "component": "input",
+                            "label": "value",
+                            "type": "number",
+                            "defaultValue": 80,
+                            "id": "deployment_containerPort_value",
+                            "hint": "add value here",
+                            "store": "value"
+                        }
+                    }
+                },
+                {
+                    "component": "multiInput",
+                    "label": "Image Pull Secret",
+                    "type": "select",
+                    "defaultValue": [],
+                    "id": "imagePullSecrets",
+                    "hint": "Image Pull Secret",
+                    "store": "deployment.imagePullSecrets"
+                },
+                {
+                    "component": "input",
+                    "label": "Replicas",
+                    "type": "number",
+                    "defaultValue": 3,
+                    "id": "replicas",
+                    "hint": "add replicas",
+                    "store": "deployment.replicaCount"
+                },
+                {
+                    "component": "field_group",
+                    "header": "Image",
+                    "id": "deployment-image",
+                    "fields": [
+                        {
+                            "component": "input",
+                            "label": "Image Repository",
+                            "type": "text",
+                            "defaultValue": "nginx",
+                            "id": "repository",
+                            "hint": "add repository",
+                            "store": "deployment.image.repository"
+                        },
+                        {
+                            "component": "input",
+                            "label": "Image Tag",
+                            "type": "text",
+                            "defaultValue": "latest",
+                            "id": "tag",
+                            "hint": "add tag",
+                            "store": "deployment.image.tag"
+                        }
+                    ]
+                },
+                {
+                    "component": "singleSelect",
+                    "label": "Pull Policy",
+                    "type": "select",
+                    "defaultValue": "IfNotPresent",
+                    "id": "pullPolicy",
+                    "hint": "select pull policy",
+                    "store": "deployment.image.pullPolicy",
+                    "options": [
+                        {
+                            "value": "IfNotPresent",
+                            "label": "IfNotPresent"
+                        }
+                    ]
+                },
+                {
+                    "component": "object_group",
+                    "header": "Annotations",
+                    "id": "deploymentAnnotations",
+                    "store": "deployment.annotations",
+                    "defaultValue": {},
+                    "fields": {
+                        "key": {
+                            "component": "input",
+                            "label": "Key",
+                            "type": "text",
+                            "defaultValue": "",
+                            "id": "deployment_annotation_key",
+                            "hint": "add key here",
+                            "store": "key"
+                        },
+                        "value": {
+                            "component": "input",
+                            "label": "value",
+                            "type": "text",
+                            "defaultValue": "",
+                            "id": "deployment_annotation_value",
+                            "hint": "add value here",
+                            "store": "value"
+                        }
+                    }
+                },
+                {
+                    "component": "object_group",
+                    "header": "Pod Annotations",
+                    "id": "deploymentPodAnnotations",
+                    "store": "deployment.podAnnotations",
+                    "defaultValue": {},
+                    "fields": {
+                        "key": {
+                            "component": "input",
+                            "label": "Key",
+                            "type": "text",
+                            "defaultValue": "",
+                            "id": "deployment_pod_annotation_key",
+                            "hint": "add key here",
+                            "store": "key"
+                        },
+                        "value": {
+                            "component": "input",
+                            "label": "value",
+                            "type": "text",
+                            "defaultValue": "",
+                            "id": "deployment_pod_annotation_value",
+                            "hint": "add value here",
+                            "store": "value"
+                        }
+                    }
+                },
+                {
+                    "component": "toggle",
+                    "label": "Security Context - Privileged",
+                    "type": "button",
+                    "defaultValue": false,
+                    "id": "deployment.securityContext.privileged",
+                    "hint": "privileged?",
+                    "store": "deployment.securityContext.privileged",
+                    "option": [
+                        {
+                            "name": "False",
+                            "value": false
+                        },
+                        {
+                            "name": "True",
+                            "value": true
+                        }
+                    ]
+                },
+                {
+                    "component": "field_group",
+                    "header": "Resource Request",
+                    "id": "request",
+                    "fields": [
+                        {
+                            "component": "input",
+                            "label": "Resource CPU Request",
+                            "type": "text",
+                            "defaultValue": "100m",
+                            "id": "resources_request_cpu",
+                            "hint": "cpu request",
+                            "store": "deployment.resources.requests.cpu"
+                        },
+                        {
+                            "component": "input",
+                            "label": "Resource Memory Request",
+                            "type": "text",
+                            "defaultValue": "256Mi",
+                            "id": "resources_request_memory",
+                            "hint": "memory request",
+                            "store": "deployment.resources.requests.memory"
+                        }
+                    ]
+                },
+                {
+                    "component": "field_group",
+                    "header": "Resource Limits",
+                    "id": "limits",
+                    "fields": [
+                        {
+                            "component": "input",
+                            "label": "Resource CPU Limts",
+                            "type": "text",
+                            "defaultValue": "1000m",
+                            "id": "resources_limits_cpu",
+                            "hint": "cpu limits",
+                            "store": "deployment.resources.limits.cpu"
+                        },
+                        {
+                            "component": "input",
+                            "label": "Resource Memory Limits",
+                            "type": "text",
+                            "defaultValue": "512Mi",
+                            "id": "resources_limits_memory",
+                            "hint": "add resource name here",
+                            "store": "deployment.resources.limits.memory"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "section": "Service",
+            "sectionDec": "Service",
+            "expand": false,
+            "type": "input_block",
+            "id": "service",
+            "fields": [
+                {
+                    "component": "singleSelect",
+                    "label": "Service Type",
+                    "type": "select",
+                    "defaultValue": "ClusterIP",
+                    "id": "service.type",
+                    "hint": "select service type",
+                    "store": "service.type",
+                    "options": [
+                        {
+                            "value": "ClusterIP",
+                            "label": "ClusterIP"
+                        }
+                    ]
+                },
+                {
+                    "component": "object_group",
+                    "header": "Annotations",
+                    "id": "serviceAnnotations",
+                    "store": "service.annotations",
+                    "defaultValue": {},
+                    "fields": {
+                        "key": {
+                            "component": "input",
+                            "label": "Key",
+                            "type": "text",
+                            "defaultValue": "",
+                            "id": "service_annotation_key",
+                            "hint": "add key here",
+                            "store": "key"
+                        },
+                        "value": {
+                            "component": "input",
+                            "label": "value",
+                            "type": "text",
+                            "defaultValue": "",
+                            "id": "service_annotation_value",
+                            "hint": "add value here",
+                            "store": "value"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "section": "Istio Configuration",
+            "sectionDec": "Istio Configuration",
+            "expand": false,
+            "type": "input_block",
+            "id": "istioConfiguration",
+            "fields": [
+                {
+                    "component": "toggle",
+                    "label": "Enable Istio",
+                    "type": "button",
+                    "defaultValue": false,
+                    "id": "istio.enabled",
+                    "hint": "Enable Istio",
+                    "store": "istio.enabled",
+                    "option": [
+                        {
+                            "name": "False",
+                            "value": false
+                        },
+                        {
+                            "name": "True",
+                            "value": true
+                        }
+                    ]
+                },
+                {
+                    "component": "toggle",
+                    "label": "Enable Virtual Service",
+                    "type": "button",
+                    "defaultValue": false,
+                    "id": "istio.virtualService.enabled",
+                    "hint": "Enable Virtual Service",
+                    "store": "istio.virtualService.enabled",
+                    "option": [
+                        {
+                            "name": "False",
+                            "value": false
+                        },
+                        {
+                            "name": "True",
+                            "value": true
+                        }
+                    ]
+                },
+                {
+                    "component": "input",
+                    "label": "Timeout",
+                    "type": "text",
+                    "defaultValue": "1m",
+                    "id": "istio.virtualService.timeout",
+                    "hint": "add timeout",
+                    "store": "istio.virtualService.timeout"
+                },
+                {
+                    "component": "input",
+                    "label": "Host",
+                    "type": "text",
+                    "defaultValue": "*",
+                    "id": "istio.virtualService.host",
+                    "hint": "add host",
+                    "store": "istio.virtualService.host"
+                },
+                {
+                    "component": "toggle",
+                    "label": "Enable Gateway",
+                    "type": "button",
+                    "defaultValue": false,
+                    "id": "istio.gateway.enabled",
+                    "hint": "Enable Gateway",
+                    "store": "istio.gateway.enabled",
+                    "option": [
+                        {
+                            "name": "False",
+                            "value": false
+                        },
+                        {
+                            "name": "True",
+                            "value": true
+                        }
+                    ]
+                },
+                {
+                    "component": "input",
+                    "label": "PortName",
+                    "type": "text",
+                    "defaultValue": "http",
+                    "id": "istio.gateway.portName",
+                    "hint": "add portName",
+                    "store": "istio.gateway.portName"
+                },
+                {
+                    "component": "input",
+                    "label": "PortNumber",
+                    "type": "number",
+                    "defaultValue": 80,
+                    "id": "istio.gateway.portNumber",
+                    "hint": "add port number",
+                    "store": "istio.gateway.portNumber"
+                },
+                {
+                    "component": "input",
+                    "label": "Protocol",
+                    "type": "text",
+                    "defaultValue": "HTTP",
+                    "id": "istio.gateway.protocol",
+                    "hint": "add protocol",
+                    "store": "istio.gateway.protocol"
+                },
+                {
+                    "component": "input",
+                    "label": "Ingress Host",
+                    "type": "text",
+                    "defaultValue": "*",
+                    "id": "istio.gateway.ingressHost",
+                    "hint": "add host",
+                    "store": "istio.gateway.ingressHost"
+                },
+                {
+                    "component": "toggle",
+                    "label": "Enable Authorization Policy",
+                    "type": "button",
+                    "defaultValue": false,
+                    "id": "istio.authorizationPolicy.enabled",
+                    "hint": "Enable Authorization Policy",
+                    "store": "istio.authorizationPolicy.enabled",
+                    "option": [
+                        {
+                            "name": "False",
+                            "value": false
+                        },
+                        {
+                            "name": "True",
+                            "value": true
+                        }
+                    ]
+                },
+                {
+                    "component": "multiInput",
+                    "label": "Allowed Namespace",
+                    "type": "select",
+                    "defaultValue": [],
+                    "id": "istion.allowedNamesapce",
+                    "hint": "Allowed Namespace",
+                    "store": "istio.authorizationPolicy.allowednamespaces"
+                }
+            ]
+        },
+        {
+            "section": "AutoScaling",
+            "sectionDec": "AutoScaling",
+            "expand": false,
+            "type": "input_block",
+            "id": "AutoScaling",
+            "fields": [
+                {
+                    "component": "toggle",
+                    "label": "Enable AutoScaling",
+                    "type": "button",
+                    "defaultValue": false,
+                    "id": "autoscaling.enabled",
+                    "hint": "Enable AutoScaling",
+                    "store": "autoscaling.enabled",
+                    "option": [
+                        {
+                            "name": "False",
+                            "value": false
+                        },
+                        {
+                            "name": "True",
+                            "value": true
+                        }
+                    ]
+                },
+                {
+                    "component": "input",
+                    "label": "Min Replicas",
+                    "type": "number",
+                    "defaultValue": 3,
+                    "id": "autoscaling.minReplicas",
+                    "hint": "Min Replicas",
+                    "store": "autoscaling.minReplicas"
+                },
+                {
+                    "component": "input",
+                    "label": "Max Replicas",
+                    "type": "number",
+                    "defaultValue": 10,
+                    "id": "autoscaling.maxReplicas",
+                    "hint": "Max Replicas",
+                    "store": "autoscaling.maxReplicas"
+                },
+                {
+                    "component": "input",
+                    "label": "Target CPU Utilization Percentage",
+                    "type": "number",
+                    "defaultValue": 80,
+                    "id": "autoscaling.targetCPUUtilizationPercentage",
+                    "hint": "Target CPU Utilization Percentage",
+                    "store": "autoscaling.targetCPUUtilizationPercentage"
+                }
+            ]
+        },
+        {
+            "section": "Service Account",
+            "sectionDec": "Service Account",
+            "expand": false,
+            "type": "input_block",
+            "id": "Service Account",
+            "fields": [
+                {
+                    "component": "object_group",
+                    "header": "Annotations",
+                    "id": "serviceAccountAnnotations",
+                    "store": "serviceAccount.annotations",
+                    "defaultValue": {},
+                    "fields": {
+                        "key": {
+                            "component": "input",
+                            "label": "Key",
+                            "type": "text",
+                            "defaultValue": "",
+                            "id": "serviceAccount_annotation_key",
+                            "hint": "add key here",
+                            "store": "key"
+                        },
+                        "value": {
+                            "component": "input",
+                            "label": "value",
+                            "type": "text",
+                            "defaultValue": "",
+                            "id": "serviceAccount_annotation_value",
+                            "hint": "add value here",
+                            "store": "value"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "section": "Service Monitor",
+            "sectionDec": "Service Monitor",
+            "expand": false,
+            "type": "input_block",
+            "id": "Service Monitor",
+            "fields": [
+                {
+                    "component": "toggle",
+                    "label": "Enable Service Monitor",
+                    "type": "button",
+                    "defaultValue": false,
+                    "id": "serviceMonitor.enabled",
+                    "hint": "Enable Service Monitor",
+                    "store": "serviceMonitor.enabled",
+                    "option": [
+                        {
+                            "name": "False",
+                            "value": false
+                        },
+                        {
+                            "name": "True",
+                            "value": true
+                        }
+                    ]
+                },
+                {
+                    "component": "input",
+                    "label": "Path",
+                    "type": "text",
+                    "defaultValue": "/actuator/prometheus",
+                    "id": "serviceMonitor.path",
+                    "hint": "add path",
+                    "store": "serviceMonitor.path"
+                },
+                {
+                    "component": "input",
+                    "label": "Port",
+                    "type": "text",
+                    "defaultValue": "http",
+                    "id": "serviceMonitor.port",
+                    "hint": "add port",
+                    "store": "serviceMonitor.port"
+                },
+                {
+                    "component": "object_group",
+                    "header": "Additional Labels",
+                    "id": "serviceMonitorAdditionalLabels",
+                    "store": "serviceMonitor.additionalLabels",
+                    "defaultValue": {},
+                    "fields": {
+                        "key": {
+                            "component": "input",
+                            "label": "Key",
+                            "type": "text",
+                            "defaultValue": "",
+                            "id": "serviceMonitor_annotation_key",
+                            "hint": "add key here",
+                            "store": "key"
+                        },
+                        "value": {
+                            "component": "input",
+                            "label": "value",
+                            "type": "text",
+                            "defaultValue": "",
+                            "id": "serviceMonitor_annotation_value",
+                            "hint": "add value here",
+                            "store": "value"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "section": "Secret Provider Class",
+            "sectionDec": "Secret Provider Class",
+            "expand": false,
+            "type": "input_block",
+            "id": "secretProviderClass",
+            "fields": [
+                {
+                    "component": "toggle",
+                    "label": "Enable Secret Provider Class",
+                    "type": "button",
+                    "defaultValue": false,
+                    "id": "secretProviderClass.enabled",
+                    "hint": "Enable Secret Provider Class",
+                    "store": "secretProviderClass.enabled",
+                    "option": [
+                        {
+                            "name": "False",
+                            "value": false
+                        },
+                        {
+                            "name": "True",
+                            "value": true
+                        }
+                    ]
+                },
+                {
+                    "component": "input",
+                    "label": "Provider",
+                    "type": "text",
+                    "defaultValue": "aws",
+                    "id": "secretProviderClass.provider",
+                    "hint": "add provider",
+                    "store": "secretProviderClass.provider"
+                }
+            ]
+        }
+    ]
+}

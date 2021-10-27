@@ -1,0 +1,285 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "autoscaling": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "maxReplicas": {
+          "type": "number"
+        },
+        "minReplicas": {
+          "type": "number"
+        },
+        "targetCPUUtilizationPercentage": {
+          "type": "number"
+        }
+      }
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "deployment": {
+      "type": "object",
+      "properties": {
+        "affinity": {
+          "type": "object"
+        },
+        "annotations": {
+          "type": "object"
+        },
+        "component": {
+          "type": "string"
+        },
+        "containerPort": {
+          "type": "object",
+          "additionalproperties": true
+        },
+        "envFrom": {
+          "type": "array"
+        },
+        "extraEnvs": {
+          "type": "array"
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "pullPolicy": {
+              "type": "string"
+            },
+            "repository": {
+              "type": "string"
+            },
+            "tag": {
+              "type": "string"
+            }
+          }
+        },
+        "imagePullSecrets": {
+          "type": "array"
+        },
+        "nodeSelector": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "podAnnotations": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "podSecurityContext": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "replicaCount": {
+          "type": "number"
+        },
+        "resources": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            },
+            "limits": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "securityContext": {
+          "type": "object",
+          "properties": {
+            "privileged": {
+              "type": "boolean"
+            }
+          }
+        },
+        "livenessProbe": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "readinessProbe": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "startupProbe": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tolerations": {
+          "type": "array"
+        },
+        "volumeMounts": {
+          "type": "array"
+        },
+        "volumes": {
+          "type": "array",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        }
+      }
+    },
+    "fullnameOverride": {
+      "type": "string"
+    },
+    "istio": {
+      "type": "object",
+      "properties": {
+        "authorizationPolicy": {
+          "type": "object",
+          "properties": {
+            "allowednamespaces": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "enabled": {
+              "type": "boolean"
+            }
+          }
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "gateway": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "ingressHost": {
+              "type": "string"
+            },
+            "portName": {
+              "type": "string"
+            },
+            "portNumber": {
+              "type": "number"
+            },
+            "protocol": {
+              "type": "string"
+            }
+          }
+        },
+        "virtualService": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "host": {
+              "type": "string"
+            },
+            "timeout": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "namespace": {
+      "type": "string"
+    },
+    "secretProviderClass": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objectName": {
+                "type": "string"
+              },
+              "objectType": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "provider": {
+          "type": "string"
+        }
+      }
+    },
+    "service": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "object"
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "port": {
+                "type": "number"
+              },
+              "targetPort": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      }
+    },
+    "serviceMonitor": {
+      "type": "object",
+      "properties": {
+        "additionalLabels": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
