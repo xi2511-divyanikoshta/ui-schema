@@ -14,7 +14,8 @@
                     "defaultValue": "",
                     "id": "project_name",
                     "hint": "Project name",
-                    "store": "project"
+                    "store": "project",
+                    "required" : true
                 },
                 {
                     "component": "input",
