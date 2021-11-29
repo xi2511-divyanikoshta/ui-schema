@@ -37,8 +37,8 @@ function SectionCreate({sectionArr, setSectionArr}) {
         <Button variant="outlined" onClick={addSection} disabled={sectionObj.sectionName === "" || sectionObj.sectionName ===null } style={{marginLeft: "1rem"}}>Add</Button>
         <Box>
         <ul>
-            {sectionArr && sectionArr.map(section => (
-            <li>
+            {sectionArr && sectionArr.map((section, index) => (
+            <li key={index}>
                 {section.sectionName}
             </li>
             ))}

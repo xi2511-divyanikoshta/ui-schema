@@ -2,6 +2,12 @@
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "properties": {
+    "namespace": {
+      "type": "string"
+    },
+    "sample": {
+      "type": "string"
+    },
     "secretProviderClass": {
       "type": "object",
       "properties": {
@@ -16,17 +22,22 @@
               "objectType": {
                 "type": "string"
               },
-              "new": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
+              "thirdField": {
+                "type": "string"
               }
-            }
+            },
+            "required" : [
+              "objectName"
+            ]
           }
         }
-      }
+      },
+      "required" : [
+        "objects"
+      ]
     }
-  }
-
+  },
+  "required" : [
+    "namespace"
+  ]
 }

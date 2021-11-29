@@ -9,22 +9,33 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Checkbox from '@mui/material/Checkbox';
+import ListItemText from '@mui/material/ListItemText';
 
 function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
-
-    const addNestedOption = (fields, count) => {
-        for(let i = 0; i < fields.length; i++){
-            if(fields[i].id === item.id){
-                count ++;
-                fields[i].options.push({
-                    value: "",
-                    label: ""
-                })
-                return fields;
+    const addNestedOption = (fieldsList, count) => {
+        let newFieldList = fieldsList.map((fieldData) => {
+            let newField = {};
+            if(fieldData.fields){
+                newField = fieldData.fields.map((field) => {
+                    if(field.id === item.id){
+                        count ++;
+                        field.options.push({
+                            value: "",
+                            label: ""
+                        })
+                    } 
+                    return field;
+               })
             }
-            fields[i].fields = addNestedOption(fields[i].fields ,count); 
-        }
-        return fields;
+            
+            if(count === 0 && fieldData.fields){
+                newField = addNestedOption(fieldData.fields, count);
+            }
+           newField.fields = fieldData;
+           return fieldData;
+        })
+        return newFieldList;
     };
 
     const addOption = (item) => {
@@ -52,11 +63,11 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
 
     const findNestedFieldModel = (fields, count, sectionInfo) => {
         for(let i = 0; i < fields.length; i++ ){
-            if(fields[i].fields && "fields" in fields[i].fields){
-                if(item.id === fields[i].fields.id){
+            if(fields[i].fields && fields[i].fields.length !== 0){
+                if(item.id === fields[i].id){
                     count++;
                     let obj = {
-                        item : fields[i].fields,
+                        item : fields[i],
                         sectionObj : {
                                 sectionName: sectionInfo.sectionName,
                                 sectionDecs:  sectionInfo.sectionDecs,
@@ -67,7 +78,12 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                                 defaultValue : sectionInfo.defaultValue,
                                 hint : sectionInfo.hint,
                                 rank : sectionInfo.rank,
+                                required : sectionInfo.required,
                             }
+                    }
+                    if(sectionInfo.sectionName === "Create Table"){
+                        obj.sectionObj["visible"] =  sectionInfo.visible;
+                        obj.sectionObj["tableData"] = sectionInfo.tableData;
                     }
                     return obj;
                 }
@@ -75,7 +91,7 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
             }else{
                 if(fields[i].id === item.id){
                     count++;
-                    var obj = {
+                    let obj = {
                         item : fields[i],
                         sectionObj : {
                              sectionName: sectionInfo.sectionName,
@@ -87,7 +103,12 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                              defaultValue : sectionInfo.defaultValue,
                              hint : sectionInfo.hint,
                              rank : sectionInfo.rank,
+                             required : sectionInfo.required,
                          }
+                    }
+                    if(sectionInfo.sectionName === "Create Table"){
+                        obj.sectionObj["visible"] =  sectionInfo.visible;
+                        obj.sectionObj["tableData"] = sectionInfo.tableData;
                     }
                     return obj;
                 }
@@ -99,44 +120,57 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
         let count = 0;
         for(var i=0;i<sectionArr.length;i++){
                 for(let j = 0; j<sectionArr[i].fields.length; j++){
-                    if(sectionArr[i].fields[j] && "fields" in sectionArr[i].fields[j]){
-                        if(item.id === sectionArr[i].fields[j].id){
-                            count++;
-                            let obj = {
-                                item : sectionArr[i].fields[j],
-                                sectionObj : {
-                                        sectionName: sectionArr[i].sectionName,
-                                        sectionDecs:  sectionArr[i].sectionDecs,
-                                        expand : true,
-                                        type : "input_block",
-                                        id : "basic_Detail",
-                                        fields : sectionArr[i].fields,
-                                        defaultValue : sectionArr[i].defaultValue,
-                                        hint : sectionArr[i].hint,
-                                        rank : sectionArr[i].rank,
-                                    }
-                            }
-                            return obj;
+                    if(sectionArr[i].fields[j].id === item.id){
+                        count++;
+                        let obj = {
+                            item : sectionArr[i].fields[j],
+                            sectionObj : {
+                                 sectionName: sectionArr[i].sectionName,
+                                 sectionDecs:  sectionArr[i].sectionDecs,
+                                 expand : true,
+                                 type : "input_block",
+                                 id : "basic_Detail",
+                                 fields : sectionArr[i].fields,
+                                 defaultValue : sectionArr[i].defaultValue,
+                                 hint : sectionArr[i].hint,
+                                 rank : sectionArr[i].rank,
+                                 required : sectionArr[i].required,
+                             }                             
                         }
-                        return findNestedFieldModel(sectionArr[i].fields[j].fields, count, sectionArr[i]);
+                        if(sectionArr[i].sectionName === "Create Table"){
+                            obj.sectionObj["visible"] =  sectionArr[i].visible;
+                            obj.sectionObj["tableData"] = sectionArr[i].tableData;
+                        }
+                        return obj;
                     }else{
-                        if(sectionArr[i].fields.id === item.id){
-                            count++;
-                            let obj = {
-                                item : sectionArr[i].fields,
-                                sectionObj : {
-                                     sectionName: sectionArr[i].sectionName,
-                                     sectionDecs:  sectionArr[i].sectionDecs,
-                                     expand : true,
-                                     type : "input_block",
-                                     id : "basic_Detail",
-                                     fields : sectionArr[i].fields,
-                                     defaultValue : sectionArr[i].defaultValue,
-                                     hint : sectionArr[i].hint,
-                                     rank : sectionArr[i].rank,
-                                 }
+                        if(sectionArr[i].fields[j] && sectionArr[i].fields[j].fields && sectionArr[i].fields[j].fields.length !== 0){
+                            if(item.id === sectionArr[i].fields[j].id){
+                                count++;
+                                let obj = {
+                                    item : sectionArr[i].fields[j],
+                                    sectionObj : {
+                                            sectionName: sectionArr[i].sectionName,
+                                            sectionDecs:  sectionArr[i].sectionDecs,
+                                            expand : true,
+                                            type : "input_block",
+                                            id : "basic_Detail",
+                                            fields : sectionArr[i].fields,
+                                            defaultValue : sectionArr[i].defaultValue,
+                                            hint : sectionArr[i].hint,
+                                            rank : sectionArr[i].rank,
+                                            required : sectionArr[i].required,
+                                        }
+                                }
+                                if(sectionArr[i].sectionName === "Create Table"){
+                                    obj.sectionObj["visible"] =  sectionArr[i].visible;
+                                    obj.sectionObj["tableData"] = sectionArr[i].tableData;
+                                }
+                                return obj;
                             }
-                            return obj;
+                            let result = findNestedFieldModel(sectionArr[i].fields[j].fields, count, sectionArr[i]);
+                            if(typeof result !== "undefined"){
+                                return result;
+                            }
                         }
                     }
                 }
@@ -151,32 +185,30 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
     }
 
     let fieldModel = findFieldModel();
-    console.log("fieldModel==========", fieldModel);
+    // console.log("fieldModel==========", fieldModel);
 
     const handleChangeForNestedFields = (fields, item, e) => {
         const {value, name} = e.target;
         for(var i = 0; i < fields.length ; i++ ){
-            if(fields[i].fields && "fields" in fields[i].fields){
-                fields[i].fields =  handleChangeForNestedFields(item, e);
-            }else{
-                if(item.id === fields[i].id) {
-                    if(name === "component"){
-                        let optionsArr = [];
-                        if(value === "singleSelect" || "multiSelect") {
-                            let options = {
-                                            value: "",
-                                            label: ""
-                                        };
-                            optionsArr.push(options);          
-                            fields[i].options = optionsArr;
-                        }else{
-                            delete(fields[i].options);
-                        }
+            if(item.id === fields[i].id) {
+                if(name === "component"){
+                    let optionsArr = [];
+                    if(value === "singleSelect" || value === "multiSelect") {
+                        let options = {
+                                        value: "",
+                                        label: ""
+                                    };
+                        optionsArr.push(options);          
+                        fields[i].options = optionsArr;
+                    }else{
+                        delete(fields[i].options);
                     }
-                    fields[i][name] = value;
                 }
+                fields[i][name] = value;
             }
-           
+            else if(fields[i] && "fields" in fields[i]){
+                fields[i].fields =  handleChangeForNestedFields(fields[i].fields, item, e);
+            }
         }
         return fields;
     };
@@ -184,13 +216,13 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
     const handleChange = async(e, item) => {
         const {value, name} = e.target;
         let newSection = sectionArr.map((section) => {
-            let newField;
+            let newField = [];
             if(askSection){
                 newField = section.fields.map((field) => {
                     if(field.id === item.id){
                         if(name === "component"){
                             let optionsArr = [];
-                            if(value === "singleSelect" || "multiSelect") {
+                            if(value === "singleSelect" ||  value === "multiSelect") {
                                 let options = {
                                                 value: "",
                                                 label: ""
@@ -200,6 +232,8 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                             }else{
                                 delete(field.options);
                             }
+                        }else if(name === "visible"){
+                            section.tableData[name] = value;
                         }
                         return {...field, [name]: value}
                     }
@@ -224,7 +258,7 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
         const {value} = e.target;
         let newField = {};
         let count = 0;
-        for (let i = 0; i < sectionArr.length; i++) {
+        for(let i = 0; i < sectionArr.length; i++) {
             for(let j = 0; j < sectionArr[i].fields.length; j++){
                 if(sectionArr[i].fields[j].id === item.id){
                         let index = sectionArr[i].fields.findIndex(field => field.id === item.id);
@@ -246,7 +280,8 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                 hint: item.hint,
                 store: item.store,
                 rank: item.rank,
-                fields : item.fields || 0
+                fields : item.fields || [],
+                required : item.required
             }
         }
 
@@ -263,18 +298,62 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
          setSectionArr(newArr);
     };
 
+    const onNestedOptionChange = (e, index, fieldList, count) => {
+        let fieldObj = fieldList.map((fieldData) => {
+            let newField = fieldData;
+            if(fieldData.fields){
+                newField = fieldData.fields.map((field) => {
+                    if(field.id === item.id){
+                        count++;
+                        field.options[index].label = e.target.value;
+                    } 
+                return field;
+               })
+            }
+           if(count === 0 && fieldData.fields){
+                newField = onNestedOptionChange(e, index, fieldData.fields, count);
+            }
+            if(fieldData.fields){
+                fieldData.fields = newField;
+            }else{
+                fieldData = newField;
+            }
+            
+            return fieldData;
+        })
+        return fieldObj;
+    }
+
     const onOptionChange = (e, index) => {
+        let count = 0;
         let newSection = sectionArr.map((section) => {
             let newField = section.fields.map((field) => {
-             if(field.id === item.id){
-                field.options[index].label = e.target.value;
-             }
-             return field;
+                if(field.id === item.id){
+                    count++;
+                    field.options[index].label = e.target.value;
+                }
+                return field;
+            });
+            if(count === 0){
+                newField = onNestedOptionChange(e, index, section.fields, count);
+            }
+            section.fields = newField;
+            return section;
+        });
+        setSectionArr(newSection);
+    }
+
+    const handleComponentChange = (e) => {
+        let newSection = sectionArr.map((section) => {
+           let newField = section.fields.map((field) => {
+               if(field.id === item.id){
+                    field[e.target.name] = e.target.value;
+               }
+               return field;
             });
             section.fields = newField;
             return section;
         });
-         
         setSectionArr(newSection);
     }
 
@@ -282,13 +361,18 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
         switch(item.jsonSchemaType) {
         case "string":
             return (
-                <> 
-                   <InputLabel id="demo-simple-select-label">Input Type (Component)</InputLabel>
-                    <Select name="component" value={fieldModel.item.component} style={{width : "224px"}}  onChange={(e)=>handleChange(e, item)} >
-                        <MenuItem value="input">Input</MenuItem>
-                        <MenuItem value="singleSelect">Select (Drop down)</MenuItem>
-                        <MenuItem value="toggle">Toggle</MenuItem>
-                    </Select>
+                <>  
+                   {(fieldModel.sectionObj && fieldModel.sectionObj.sectionName) &&
+                        <div>
+                            <InputLabel id="demo-simple-select-label">Input Type (Component)</InputLabel>
+                            <Select name="component" value={fieldModel.item.component} style={{width : "224px"}}  onChange={(e)=>handleChange(e, item)} >
+                                <MenuItem value="input">Input</MenuItem>
+                                <MenuItem value="singleSelect">Select (Drop down)</MenuItem>
+                                <MenuItem value="toggle">Toggle</MenuItem>
+                            </Select>
+                        </div>                        
+                    }
+                   
                     {fieldModel.item.component && fieldModel.item.component === "singleSelect" && 
                     <Box>
                         <AddCircleOutlineOutlinedIcon onClick={() => addOption(item)}/>
@@ -305,11 +389,15 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
         case "arrayString" : 
             return ( 
             <>
-                <InputLabel id="demo-simple-select-label">Input Type (Component)</InputLabel>
-                <Select name="component" value={fieldModel.item.component} style={{width : "224px"}}  onChange={(e)=>handleChange(e, item)} >
-                    <MenuItem value="multiInput">Multi Input</MenuItem>
-                    <MenuItem value="multiSelect">Multi Select</MenuItem>
-                </Select>
+                {(fieldModel.sectionObj && fieldModel.sectionObj.sectionName) &&
+                    <div>
+                        <InputLabel id="demo-simple-select-label">Input Type (Component)</InputLabel>
+                        <Select name="component" value={fieldModel.item.component} style={{width : "224px"}}  onChange={(e)=>handleChange(e, item)} >
+                            <MenuItem value="multiInput">Multi Input</MenuItem>
+                            <MenuItem value="multiSelect">Multi Select</MenuItem>
+                        </Select>
+                    </div>
+                }    
                 {fieldModel.item.component && fieldModel.item.component === "multiSelect" && 
                     <Box>
                         <AddCircleOutlineOutlinedIcon onClick={() => addOption(item)}/>
@@ -323,28 +411,140 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
             </>
         );
 
-        case "arrayOfObjectWithThreeElement" : 
+        case "arrayOfObjectWithThreeFields" : 
             return (
                 <>
-                <div>hello from array of objects, object with not greater then 3 element</div>
 
-                <InputLabel id="demo-simple-select-label">Input Type (Component)</InputLabel>
-                <Select name="component" value={fieldModel.item.component} style={{width : "224px"}}  onChange={(e)=>handleChange(e, item)} >
-                    <MenuItem value="rawInput">Raw Input</MenuItem>
-                    <MenuItem value="array_group">Array group</MenuItem>
-                </Select>
-                {fieldModel.item.component && fieldModel.item.component === "array_group" && item.fields && item.fields.length > 0 && item.fields.map((item, index) => (
-                    <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header">
-                        <Typography>{item.store}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography>
-                        <SwitchCase item={item} sectionArr={sectionArr} setSectionArr={setSectionArr} askSection={false} />
-                        </Typography>
-                    </AccordionDetails>
-                    </Accordion>
+                {(fieldModel.sectionObj && fieldModel.sectionObj.sectionName) &&
+                    <div>
+                        <InputLabel id="demo-simple-select-label">Input Type (Component)</InputLabel>
+                        <Select name="component" value={fieldModel.item.component} style={{width : "224px"}}  onChange={(e)=>handleChange(e, item)} >
+                            <MenuItem value="rawInput">Raw Input</MenuItem>
+                            <MenuItem value="array_group">Array group</MenuItem>
+                        </Select>
+                    </div>
+                }
+                {fieldModel.item.component && fieldModel.item.component === "array_group" && item.fields && item.fields.length > 0 && item.fields.map((data, index) => (
+                    <div>
+                        <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header">
+                            <Typography>{data.store}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography>
+                            <SwitchCase item={data} sectionArr={sectionArr} setSectionArr={setSectionArr} askSection={false} />
+                            </Typography>
+                        </AccordionDetails>
+                        </Accordion>
+                    </div>                    
                 ))}
+                </>
+            );
+
+        case "arrayOfObjectGreaterThenThreeFields" : 
+            return (
+                <>
+                    { fieldModel.sectionObj && fieldModel.sectionObj.sectionName && fieldModel.sectionObj.sectionName !== "Create Table" && 
+                       <div>
+                        <InputLabel id="demo-simple-select-label">Input Type (Component)</InputLabel>
+                        <Select name="component" value={fieldModel.item.component} style={{width : "224px"}}  onChange={(e)=>handleChange(e, item)} >
+                            <MenuItem value="rawInput">Raw Input</MenuItem>
+                        </Select>
+                       </div>
+                    }
+                    {   fieldModel.sectionObj.sectionName === "Create Table"  && item.fields && item.fields.length > 0 && item.fields.map((data, index) => (
+                            <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header">
+                                <Typography>{data.store}</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Typography>
+                                <SwitchCase item={data} sectionArr={sectionArr} setSectionArr={setSectionArr} askSection={false} />
+                                </Typography>
+                            </AccordionDetails>
+                            </Accordion>
+                        ))
+                    }
+                    
+                </>
+            );
+
+            case "nestedArrayOfObjectGreaterThenThreeFields" : 
+            return (
+                <>
+                    <div>
+                       <InputLabel id="demo-simple-select-label">Input Type (Component)</InputLabel>
+                        <Select name="component" value={fieldModel.item.component} style={{width : "224px"}}  onChange={(e)=>handleChange(e, item)} >
+                            <MenuItem value="rawInput">Raw Input</MenuItem>
+                        </Select>
+                    </div>
+                    {   fieldModel.item.component !== "rawInput" && fieldModel.sectionObj.sectionName === "Create Table"  && item.fields && item.fields.length > 0 && item.fields.map((data, index) => (
+                            <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}  aria-controls="panel1a-content" id="panel1a-header">
+                                <Typography>{data.store}</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Typography>
+                                <SwitchCase item={data} sectionArr={sectionArr} setSectionArr={setSectionArr} askSection={false} />
+                                </Typography>
+                            </AccordionDetails>
+                            </Accordion>
+                        ))
+                    }
+                </>
+            );
+            
+            case "arrayOfObjectGreaterThenThreeFieldsHavingNestedArrayOrObject" : 
+            return (
+                <>
+                    {   fieldModel.sectionObj && fieldModel.sectionObj.sectionName && fieldModel.sectionObj.sectionName !== "Create Table" && 
+                       <div>
+                       <InputLabel id="demo-simple-select-label">Input Type (Component)</InputLabel>
+                        <Select name="component" value={fieldModel.item.component} style={{width : "224px"}}  onChange={(e)=>handleChange(e, item)} >
+                            <MenuItem value="rawInput">Raw Input</MenuItem>
+                        </Select>
+                       </div>
+                    }
+                    {   fieldModel.sectionObj.sectionName === "Create Table"  && item.fields && item.fields.length > 0 && item.fields.map((data, index) => (
+                            <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography>{data.store}</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Typography>
+                                <SwitchCase item={data} sectionArr={sectionArr} setSectionArr={setSectionArr} askSection={false} />
+                                </Typography>
+                            </AccordionDetails>
+                            </Accordion>
+                        ))
+                    }
+                    { fieldModel.sectionObj.sectionName === "Create Table" &&
+                        <div>
+                            <InputLabel id="demo-simple-select-label">Visible</InputLabel>
+                            <Select 
+                                name="visible"
+                                style={{width : "224px"}}
+                                multiple 
+                                value={fieldModel.sectionObj.tableData.visible}
+                                onChange={(e) => handleChange(e, item)}
+                                renderValue={(selected) => selected.join(', ')}
+                            >
+                                {item.fields && item.fields.map(data => (
+                                    <MenuItem key={data.id} value={data.name}>
+                                    <Checkbox checked={fieldModel.sectionObj.tableData.visible.indexOf(data.name) > -1} />
+                                    <ListItemText primary={data.name} />
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </div>
+                    }
+                </>
+            );
+
+            case "array" : 
+            return (
+                <>
+                    <div>hello from array</div>
                 </>
             );
 
@@ -360,7 +560,7 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                     <InputLabel id="demo-simple-select-label">Section</InputLabel>
                     <Select name="section" value={fieldModel.sectionObj.sectionName} style={{width : "224px"}} onChange={(e)=>handleSectionChange(e, item)} >
                         {sectionArr && sectionArr.map(section => (
-                            <MenuItem key={section.id} value={section.sectionName}>{section.sectionName}</MenuItem>
+                            <MenuItem key={section.id} value={section.sectionName} disabled={(section.sectionName === "Create Table" && !(item.jsonSchemaType === "arrayOfObjectGreaterThenThreeFieldsHavingNestedArrayOrObject" || item.jsonSchemaType === "arrayOfObjectGreaterThenThreeFields"))} >{section.sectionName}</MenuItem>
                         ))}
                     </Select>
                 </div>
@@ -370,15 +570,18 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
 
             {fieldModel.sectionObj && fieldModel.sectionObj.sectionName && <TextField type="text" name="hint" value={fieldModel.item.hint} label="Hint" onChange={(e)=>handleChange(e, item)} />}
 
-            {fieldModel.sectionObj && fieldModel.sectionObj.sectionName && <TextField type="number" name="rank" value={fieldModel.item.rank} label="Rank" onChange={(e)=>handleChange(e, item)} />}
+            {fieldModel.sectionObj && fieldModel.sectionObj.sectionName && <TextField required type="number" name="rank" value={fieldModel.item.rank} label="Rank" onChange={(e)=>handleChange(e, item)} />}
 
             {fieldModel.sectionObj && fieldModel.sectionObj.sectionName && <TextField type="text" name="defaultValue" value={fieldModel.item.defaultValue} label="Default Value" onChange={(e)=>handleChange(e, item)} />}
 
             {fieldModel.sectionObj && fieldModel.sectionObj.sectionName && 
-                <Select name="required" style={{width : "224px"}}  onChange={(e)=>handleChange(e, item)} >
-                    <MenuItem value="true">True</MenuItem>
-                    <MenuItem value="false">False</MenuItem>
-                </Select>
+                <div>
+                    <InputLabel id="demo-simple-select-label">Required</InputLabel>
+                    <Select value={fieldModel.item.required} name="required" style={{width : "224px"}}  onChange={(e)=>handleChange(e, item)} >
+                        <MenuItem value="true">True</MenuItem>
+                        <MenuItem value="false">False</MenuItem>
+                    </Select>
+                </div>
             }
 
             {renderSwitch(item)}

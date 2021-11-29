@@ -28,12 +28,11 @@ function App() {
           obj.hint = "hint"
           obj.label = ""
           obj.store = store;
-          // obj.jsonSchemaType = schema.items.properties[property].type;
           obj.jsonSchemaType = "arrayString";
           obj.component = "";
           obj.type = "";
           obj.defaultValue = defaultValues[store];
-          // obj.required = (schema.items.properties[property].type.required && schema.items.properties[property].type.required.includes(property))  ? schema.items.properties[property].type.required.includes(property) : false;
+          obj.required = (schema.items.required && schema.items.required.includes(property))  ? true : false;
           if(!fields.fields){
             fields.fields = [];
           }
@@ -41,15 +40,23 @@ function App() {
 
           if(schema.items.properties[property].items.type !== "string"){
             if(Object.keys(schema.items.properties[property].items.properties).length <= 3){
-              obj.jsonSchemaType = "arrayOfObjectWithThreeElement";
+              obj.jsonSchemaType = "arrayOfObjectWithThreeFields";
               for (const keys in schema.items.properties[property].items.properties){
                 if(schema.items.properties[property].items.properties[keys].type === "array" && schema.items.properties[property].items.properties[keys].items.type === "object"){
-                    obj.jsonSchemaType = "rawInput";
+                    obj.jsonSchemaType = "arrayOfObjectWithThreeFieldsHavingArrayOrObjectInside";
                     obj.component = "rawInput"
                 }
               }
+            }else if (Object.keys(schema.items.properties[property].items.properties).length > 3) {
+              obj.jsonSchemaType = "nestedArrayOfObjectGreaterThenThreeFields";
+              for (const keys in schema.items.properties[property].items.properties){
+                if(schema.items.properties[property].items.properties[keys].type === "array" && schema.items.properties[property].items.properties[keys].items.type === "object"){
+                    obj.jsonSchemaType = "nestedArrayOfObjectGreaterThenThreeFieldsHavingNestedArrayOrObject";
+                    obj.component = ""
+                }
+              }
             }else{
-              obj.jsonSchemaType = schema.properties[property].type;
+              obj.jsonSchemaType = schema.items.properties[property].type;
             }
             fields.fields[fields.fields.length-1] = createArrayFields(schema.items.properties[property], store, fields.fields[fields.fields.length-1], property);
           }
@@ -66,7 +73,7 @@ function App() {
           obj.component = "";
           obj.type = "";
           obj.defaultValue = defaultValues[store];
-          // obj.required = (schema.items.properties[property].required && schema.items.properties[property].required.includes(property))  ? schema.items.properties[property].required.includes(property) : false;
+          obj.required = (schema.items.required && schema.items.required.includes(property))  ? true : false;
           if(!fields.fields){
             fields.fields = [];
           }
@@ -86,12 +93,11 @@ function App() {
       obj.hint = "hint"
       obj.label = ""
       obj.store = store;
-      // obj.jsonSchemaType = schema.items.properties[fieldName].type;
       obj.jsonSchemaType = "arrayString";
       obj.component = "";
       obj.type = "";
       obj.defaultValue = defaultValues[store];
-      // obj.required = (schema.items.properties[property].required && schema.items.properties[property].required.includes(property))  ? schema.items.properties[property].required.includes(property) : false;
+      // obj.required = (schema.items.properties[property].required && schema.items.properties[property].required.includes(property))  ? true : false;
       if(!fields.fields){
         fields.fields = [];
       }
@@ -132,18 +138,26 @@ function App() {
           obj.component = "";
           obj.type = "";
           obj.defaultValue = defaultValues[store];
-          obj.required = (jsonSchema.required && jsonSchema.required.includes(property))  ? jsonSchema.required.includes(property) : false;
+          obj.required = (jsonSchema.required && jsonSchema.required.includes(property))  ? true : false;
           fields.push(obj);
           if(jsonSchema.properties[property].items.type !== "string"){
             if(Object.keys(jsonSchema.properties[property].items.properties).length <= 3){
-              obj.jsonSchemaType = "arrayOfObjectWithThreeElement";
+              obj.jsonSchemaType = "arrayOfObjectWithThreeFields";
               for (const keys in jsonSchema.properties[property].items.properties){
                 if(jsonSchema.properties[property].items.properties[keys].type === "array" && jsonSchema.properties[property].items.properties[keys].items.type === "object"){
-                    obj.jsonSchemaType = "rawInput";
+                    obj.jsonSchemaType = "arrayOfObjectWithThreeFieldsHavingArrayOrObjectInside";
                     obj.component = "rawInput"
                 }
               }
-            }else{
+            } else if (Object.keys(jsonSchema.properties[property].items.properties).length > 3) {
+              obj.jsonSchemaType = "arrayOfObjectGreaterThenThreeFields";
+              for (const keys in jsonSchema.properties[property].items.properties){
+                if(jsonSchema.properties[property].items.properties[keys].type === "array" && jsonSchema.properties[property].items.properties[keys].items.type === "object"){
+                    obj.jsonSchemaType = "arrayOfObjectGreaterThenThreeFieldsHavingNestedArrayOrObject";
+                    obj.component = ""
+                }
+              }
+            } else {
               obj.jsonSchemaType = jsonSchema.properties[property].type;
             }
             fields[(fields.length - 1)] = createArrayFields(schema, store, fields[fields.length - 1], property);
@@ -173,7 +187,7 @@ function App() {
           }
           obj.type = "";
           obj.defaultValue = defaultValues[store];
-          obj.required = (jsonSchema.required && jsonSchema.required.includes(property))  ? jsonSchema.required.includes(property) : false;
+          obj.required = (jsonSchema.required && jsonSchema.required.includes(property))  ? true : false;
           fields.push(obj);
 
           let strArr = store.split(".");
@@ -206,7 +220,7 @@ function App() {
   };
 
   let fields = createFields(schemaData, storeData, []);
-  console.log("fields-----", fields);
+  // console.log("fields-----", fields);
 
   const [sectionArr, setSectionArr] = useState([
     {
@@ -217,12 +231,55 @@ function App() {
       id : "Default",
       fields : []
     },
+    {
+      sectionName: "Create Table",
+      sectionDecs: "Create Table",
+      expand : true,
+      type : "table",
+      id : "Default",
+      tableData : {
+        editable : true,
+        deletable : true,
+        store: "node_groups",
+        visible : [],
+        defaultValue : [],
+        fields : [],
+      },
+      fields : []
+    },
   ]);
 
-  console.log("sectionArr---", sectionArr);
+  const updateStore = (fields) => {
+    let newFileds = fields.map((field) => {
+      if(field.fields){
+        field.fields = updateStore(field.fields);
+      }
+        let newStore = field.store.split(".");
+        field.store = newStore[newStore.length - 1];
+        return field;
+    })
+    return newFileds;
+  }
 
   const submitForm = () => {
-    console.log("sectionArr---", sectionArr);
+    let newSection = sectionArr.map((section) => {
+        if(section.sectionName === "Create Table"){
+          let newFields = section.fields.map((field) => {
+            if(field.fields){
+              field.fields = updateStore(field.fields);
+            }
+            let newStore = field.store.split(".");
+            field.store = newStore[newStore.length - 1];
+            return field;
+          })
+          section.fields.sort((a, b) => a.rank - b.rank);
+          section.fields = newFields;
+          section.tableData.fields = section.fields;
+          delete section.fields
+        }
+      return section;
+    });
+    console.log("section--------", newSection);
   };
 
   return (
