@@ -38,7 +38,7 @@ function App() {
           }
           fields.fields.push(obj);
 
-          if(schema.items.properties[property].items.type !== "string"){
+          if(schema.items.properties[property].items &&  schema.items.properties[property].items.type !== "string" && !(schema.items.properties[property].items.additionalProperties)){
             if(Object.keys(schema.items.properties[property].items.properties).length <= 3){
               obj.jsonSchemaType = "arrayOfObjectWithThreeFields";
               for (const keys in schema.items.properties[property].items.properties){
@@ -60,7 +60,7 @@ function App() {
             }
             fields.fields[fields.fields.length-1] = createArrayFields(schema.items.properties[property], store, fields.fields[fields.fields.length-1], property);
           }
-          
+          obj.component = "rawInput";
         }else{
           store += "." + property;
           let obj = {};
@@ -71,6 +71,9 @@ function App() {
           obj.store = store;
           obj.jsonSchemaType = schema.items.properties[property].type;
           obj.component = "";
+          if(schema.items.properties[property].additionalProperties){
+            obj.component = "rawInput";
+          }
           obj.type = "";
           obj.defaultValue = defaultValues[store];
           obj.required = (schema.items.required && schema.items.required.includes(property))  ? true : false;
@@ -140,7 +143,7 @@ function App() {
           obj.defaultValue = defaultValues[store];
           obj.required = (jsonSchema.required && jsonSchema.required.includes(property))  ? true : false;
           fields.push(obj);
-          if(jsonSchema.properties[property].items.type !== "string"){
+          if(jsonSchema.properties[property].items && jsonSchema.properties[property].items.type !== "string" && !(jsonSchema.properties[property].items.additionalProperties)){
             if(Object.keys(jsonSchema.properties[property].items.properties).length <= 3){
               obj.jsonSchemaType = "arrayOfObjectWithThreeFields";
               for (const keys in jsonSchema.properties[property].items.properties){
@@ -163,7 +166,7 @@ function App() {
             fields[(fields.length - 1)] = createArrayFields(schema, store, fields[fields.length - 1], property);
           }
           
-          
+          obj.component = "rawInput"
           let strArr = store.split(".");
           store = "";
           for (let i = 0; i < (strArr.length - 1); i++) {
@@ -178,8 +181,11 @@ function App() {
           obj.hint = "hint"
           obj.label = ""
           obj.store = store;
-          obj.jsonSchemaType = jsonSchema.properties[property].type;
           obj.component = "";
+          obj.jsonSchemaType = jsonSchema.properties[property].type;
+          if(jsonSchema.properties[property].additionalProperties){
+            obj.component = "rawInput";
+          }
           if(jsonSchema.properties[property].type === "boolean"){
             obj.component = "toggle";
           }else if(jsonSchema.properties[property].type === "number"){
