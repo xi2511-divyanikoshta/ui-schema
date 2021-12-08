@@ -20,7 +20,7 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                 newField = fieldData.fields.map((field) => {
                     if(field.id === item.id){
                         count ++;
-                        field.options.push({
+                        field.option.push({
                             value: "",
                             label: ""
                         })
@@ -38,16 +38,23 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
         return newFieldList;
     };
 
-    const addOption = (item) => {
+    const addOption = (item, inputType) => {
         let count = 0;
         let newSection = sectionArr.map((section) => {
             let newField = section.fields.map((field) => {
              if(field.id === item.id){
                 count ++;
-                field.options.push({
-                    value: "",
-                    label: ""
-                })
+                if(inputType === "dropDown"){
+                    field.option.push({
+                        value: "",
+                        label: ""
+                    })
+                }else{
+                    field.option.push({
+                        value: "",
+                        name: ""
+                    })
+                }
              }
              return field;
             });
@@ -79,6 +86,7 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                                 hint : sectionInfo.hint,
                                 rank : sectionInfo.rank,
                                 required : sectionInfo.required,
+                                option : sectionInfo.option
                             }
                     }
                     if(sectionInfo.sectionName === "Create Table"){
@@ -104,6 +112,7 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                              hint : sectionInfo.hint,
                              rank : sectionInfo.rank,
                              required : sectionInfo.required,
+                             option : sectionInfo.option
                          }
                     }
                     if(sectionInfo.sectionName === "Create Table"){
@@ -135,6 +144,7 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                                  hint : sectionArr[i].hint,
                                  rank : sectionArr[i].rank,
                                  required : sectionArr[i].required,
+                                 option : sectionArr[i].option
                              }                             
                         }
                         if(sectionArr[i].sectionName === "Create Table"){
@@ -159,6 +169,7 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                                             hint : sectionArr[i].hint,
                                             rank : sectionArr[i].rank,
                                             required : sectionArr[i].required,
+                                            option : sectionArr[i].option
                                         }
                                 }
                                 if(sectionArr[i].sectionName === "Create Table"){
@@ -199,9 +210,9 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                                         label: ""
                                     };
                         optionsArr.push(options);          
-                        fields[i].options = optionsArr;
+                        fields[i].option = optionsArr;
                     }else{
-                        delete(fields[i].options);
+                        delete(fields[i].option);
                     }
                 }
                 fields[i][name] = value;
@@ -228,9 +239,16 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                                                 label: ""
                                             };
                                 optionsArr.push(options);          
-                                field = {...field, "options" : optionsArr};
+                                field = {...field, "option" : optionsArr};
+                            }else if(value === "toggle"){
+                                let options = {
+                                    value: "",
+                                    name: ""
+                                };
+                                optionsArr.push(options);          
+                                field = {...field, "option" : optionsArr};
                             }else{
-                                delete(field.options);
+                                delete(field.option);
                             }
                         }else if(name === "visible"){
                             section.tableData[name] = value;
@@ -281,7 +299,8 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                 store: item.store,
                 rank: item.rank,
                 fields : item.fields || [],
-                required : item.required
+                required : item.required,
+                option : item.option
             }
         }
 
@@ -299,13 +318,14 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
     };
 
     const onNestedOptionChange = (e, index, fieldList, count) => {
+        const {value, name} = e.target;
         let fieldObj = fieldList.map((fieldData) => {
             let newField = fieldData;
             if(fieldData.fields){
                 newField = fieldData.fields.map((field) => {
                     if(field.id === item.id){
                         count++;
-                        field.options[index].label = e.target.value;
+                        field.options[index][name] = value;
                     } 
                 return field;
                })
@@ -326,31 +346,18 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
 
     const onOptionChange = (e, index) => {
         let count = 0;
+        const {value, name} = e.target;
         let newSection = sectionArr.map((section) => {
             let newField = section.fields.map((field) => {
                 if(field.id === item.id){
                     count++;
-                    field.options[index].label = e.target.value;
+                    field.option[index][name] = value;
                 }
                 return field;
             });
             if(count === 0){
                 newField = onNestedOptionChange(e, index, section.fields, count);
             }
-            section.fields = newField;
-            return section;
-        });
-        setSectionArr(newSection);
-    }
-
-    const handleComponentChange = (e) => {
-        let newSection = sectionArr.map((section) => {
-           let newField = section.fields.map((field) => {
-               if(field.id === item.id){
-                    field[e.target.name] = e.target.value;
-               }
-               return field;
-            });
             section.fields = newField;
             return section;
         });
@@ -375,12 +382,23 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                    
                     {fieldModel.item.component && fieldModel.item.component === "singleSelect" && 
                     <Box>
-                        <AddCircleOutlineOutlinedIcon onClick={() => addOption(item)}/>
+                        <AddCircleOutlineOutlinedIcon onClick={() => addOption(item, "dropDown")}/>
                     </Box>}
-                    {fieldModel.item.component && fieldModel.item.component === "singleSelect" && fieldModel.item.options && fieldModel.item.options.map((option, index) => (
+                    {fieldModel.item.component && fieldModel.item.component === "singleSelect" && fieldModel.item.option && fieldModel.item.option.map((data, index) => (
                         <Box>
-                            <TextField required value={option.label} type="text" label="Option" onChange={(event) => onOptionChange(event, index)} />
-                            <TextField required type="text" label="Value" />
+                            <TextField required value={data.label} type="text" label="Label" name="label" onChange={(event) => onOptionChange(event, index)} />
+                            <TextField required value={data.value} type="text" label="Value" name="value" onChange={(event) => onOptionChange(event, index)} />
+                        </Box>
+                    ))}
+
+                    {fieldModel.item.component && fieldModel.item.component === "toggle" && 
+                    <Box>
+                        <AddCircleOutlineOutlinedIcon onClick={() => addOption(item, "toggle")}/>
+                    </Box>}
+                    {fieldModel.item.component && fieldModel.item.component === "toggle" && fieldModel.item.option && fieldModel.item.option.map((data, index) => (
+                        <Box>
+                            <TextField required value={data.name} type="text" label="Name" name="name" onChange={(event) => onOptionChange(event, index)} />
+                            <TextField required value={data.value} type="text" label="Value" name="value" onChange={(event) => onOptionChange(event, index)} />
                         </Box>
                     ))}
                 </>
@@ -402,10 +420,10 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                     <Box>
                         <AddCircleOutlineOutlinedIcon onClick={() => addOption(item)}/>
                     </Box>}
-                    {fieldModel.item.component && fieldModel.item.component === "multiSelect" && fieldModel.item.options && fieldModel.item.options.map((option, index) => (
+                    {fieldModel.item.component && fieldModel.item.component === "multiSelect" && fieldModel.item.option && fieldModel.item.option.map((data, index) => (
                         <Box>
-                            <TextField required value={option.label} type="text" label="Option" onChange={(event) => onOptionChange(event, index)} />
-                            <TextField required type="text" label="Value" />
+                            <TextField required value={data.label} type="text" label="Label" name="label" onChange={(event) => onOptionChange(event, index)} />
+                            <TextField required value={data.value} type="text" label="Value" name="value" onChange={(event) => onOptionChange(event, index)} />
                         </Box>
                     ))}
             </>

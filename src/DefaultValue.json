@@ -1,20 +1,5 @@
-{
-    "autoscaling.minReplicas" : 1,
-    "autoscaling.targetCPUUtilizationPercentage" : 2,
-    "secretProviderClass.objects" : "default val",
-    "secretProviderClass.objects.objectName" : "secretProviderClass.objects.objectName",
-    "secretProviderClass.objects.fourthField" : "secretProviderClass.objects.fourthField",
-    "secretProviderClass.objects.fourthField.sample" : "secretProviderClass.objects.fourthField.sample",
-    "node_groups" : [
-        {
-          "name": "worker-1",
-          "min_capacity": 3,
-          "max_capacity": 9,
-          "instance_type": "m5.medium",
-          "capacity_type": "ON_DEMAND",
-          "labels": {
-            "type": "memory-intensive"
-          }
-        }
-      ]
+{   
+    "autoscaling" : {
+        "targetCPUUtilizationPercentage" : "defult value"
+    }  
 }
