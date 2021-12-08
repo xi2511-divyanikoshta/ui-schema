@@ -217,12 +217,14 @@ function App() {
           obj.label = store;
           obj.store = store;
           obj.component = "";
+          obj.type = "";
           obj.jsonSchemaType = getType(jsonSchema.properties[property]);
           if(jsonSchema.properties[property].additionalProperties){
             obj.component = "rawInput";
           }
           if(getType(jsonSchema.properties[property]) === "boolean"){
             obj.component = "toggle";
+            obj.type = "button";
             obj.option = [
               {
                   "name": "False",
@@ -235,8 +237,8 @@ function App() {
           ]
           }else if(getType(jsonSchema.properties[property]) === "number"){
             obj.component = "input";
+            obj.type = "number";
           }
-          obj.type = "";
           obj.defaultValue = getDefaultValue(store);
           obj.required = (jsonSchema.required && jsonSchema.required.includes(property))  ? true : false;
           fields.push(obj);
@@ -276,15 +278,15 @@ function App() {
   const [sectionArr, setSectionArr] = useState([
     {
       sectionName: "Basic Detail",
-      sectionDecs: "Basic Detail",
+      sectionDec: "Basic Detail",
       expand : true,
-      type : "",
+      type : "input_block",
       id : "Default",
       fields : []
     },
     {
       sectionName: "Create Table",
-      sectionDecs: "Create Table",
+      sectionDec: "Create Table",
       expand : true,
       type : "table",
       id : "Default",
@@ -313,14 +315,31 @@ function App() {
   }
 
   const checkRawInput = (fieldArr) => {
-    console.log("field-----"  , fieldArr);
     for(let i = 0; i < fieldArr.length ; i++ ){
       if(fieldArr[i].component === "rawInput"){
         delete (fieldArr[i].fields);
+      }else{
+        if(fieldArr[i].fields){
+          fieldArr[i].fields = checkRawInput(fieldArr[i].fields);
+        }
       }
     }
     return fieldArr;
   };
+
+  const removeUsedField = (fieldList) => {
+    for(let i = 0; i < fieldList.length; i++) {
+        delete (fieldList[i].rank);
+        delete (fieldList[i].jsonSchemaType);
+        if(!fieldList[i].option || (fieldList[i].option && fieldList[i].option.length === 0)) {
+            delete (fieldList[i].option);
+        }
+        if(fieldList[i].fields) {
+          fieldList[i].fields = removeUsedField(fieldList[i].fields);
+        }
+    }
+    return fieldList;
+  }
 
   const submitForm = () => {
     let newSection = sectionArr.map((section) => {
@@ -341,20 +360,13 @@ function App() {
                 index = newFiledsArr.findIndex(x => x.store === section.fields[j].store);
                 delete newFiledsArr.splice(index,1);
               }
-              if(section.fields[i].option && section.fields[i].option.length === 0) {
-                delete (section.fields[i].option);
-              }
           }
           if(fieldGroupObj.fields.length !== 0){
             newFiledsArr.push(fieldGroupObj)
           }
-
         }
         section.fields = checkRawInput(newFiledsArr);
-
-        for(let i = 0; i < section.fields.length; i++){
-          delete (section.fields[i].rank);
-        }
+        section.fields = removeUsedField(section.fields);
 
         if(section.sectionName === "Create Table"){
           let newFields = section.fields.map((field) => {

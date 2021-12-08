@@ -38,23 +38,16 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
         return newFieldList;
     };
 
-    const addOption = (item, inputType) => {
+    const addOption = (item) => {
         let count = 0;
         let newSection = sectionArr.map((section) => {
             let newField = section.fields.map((field) => {
              if(field.id === item.id){
                 count ++;
-                if(inputType === "dropDown"){
-                    field.option.push({
-                        value: "",
-                        label: ""
-                    })
-                }else{
-                    field.option.push({
-                        value: "",
-                        name: ""
-                    })
-                }
+                field.option.push({
+                    value: "",
+                    label: ""
+                })
              }
              return field;
             });
@@ -204,7 +197,7 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
             if(item.id === fields[i].id) {
                 if(name === "component"){
                     let optionsArr = [];
-                    if(value === "singleSelect" || value === "multiSelect") {
+                    if(value === "singleSelect" || value === "multiSelect" || value === "toggle") {
                         let options = {
                                         value: "",
                                         label: ""
@@ -233,21 +226,21 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                     if(field.id === item.id){
                         if(name === "component"){
                             let optionsArr = [];
-                            if(value === "singleSelect" ||  value === "multiSelect") {
+                            if(value === "singleSelect" ||  value === "multiSelect" || value === "toggle") {
                                 let options = {
                                                 value: "",
                                                 label: ""
                                             };
-                                optionsArr.push(options);          
+                                optionsArr.push(options);     
                                 field = {...field, "option" : optionsArr};
-                            }else if(value === "toggle"){
-                                let options = {
-                                    value: "",
-                                    name: ""
-                                };
-                                optionsArr.push(options);          
-                                field = {...field, "option" : optionsArr};
-                            }else{
+                                if(value === "singleSelect" ||  value === "multiSelect"){
+                                    field = {...field, "type" : "select"};
+                                }
+                            } else if (value === "input"){
+                                field = {...field, "type" : "text"};
+                            }else if(value === "multiInput") {
+                                field = {...field, "type" : "select"};
+                            } else{
                                 delete(field.option);
                             }
                         }else if(name === "visible"){
@@ -380,27 +373,27 @@ function SwitchCase({item, sectionArr, setSectionArr, askSection}) {
                         </div>                        
                     }
                    
-                    {fieldModel.item.component && fieldModel.item.component === "singleSelect" && 
+                    {fieldModel.item.component && (fieldModel.item.component === "singleSelect" || fieldModel.item.component === "toggle") && 
                     <Box>
-                        <AddCircleOutlineOutlinedIcon onClick={() => addOption(item, "dropDown")}/>
+                        <AddCircleOutlineOutlinedIcon onClick={() => addOption(item)}/>
                     </Box>}
-                    {fieldModel.item.component && fieldModel.item.component === "singleSelect" && fieldModel.item.option && fieldModel.item.option.map((data, index) => (
+                    {fieldModel.item.component && (fieldModel.item.component === "singleSelect" || fieldModel.item.component === "toggle") && fieldModel.item.option && fieldModel.item.option.map((data, index) => (
                         <Box>
                             <TextField required value={data.label} type="text" label="Label" name="label" onChange={(event) => onOptionChange(event, index)} />
                             <TextField required value={data.value} type="text" label="Value" name="value" onChange={(event) => onOptionChange(event, index)} />
                         </Box>
                     ))}
 
-                    {fieldModel.item.component && fieldModel.item.component === "toggle" && 
+                    {/* {fieldModel.item.component && fieldModel.item.component === "toggle" && 
                     <Box>
-                        <AddCircleOutlineOutlinedIcon onClick={() => addOption(item, "toggle")}/>
+                        <AddCircleOutlineOutlinedIcon onClick={() => addOption(item)}/>
                     </Box>}
                     {fieldModel.item.component && fieldModel.item.component === "toggle" && fieldModel.item.option && fieldModel.item.option.map((data, index) => (
                         <Box>
                             <TextField required value={data.name} type="text" label="Name" name="name" onChange={(event) => onOptionChange(event, index)} />
                             <TextField required value={data.value} type="text" label="Value" name="value" onChange={(event) => onOptionChange(event, index)} />
                         </Box>
-                    ))}
+                    ))} */}
                 </>
             );  
         
