@@ -341,14 +341,14 @@ function App() {
     return fieldList;
   }
 
-  const submitForm = () => {
+  const submitForm = (el) => {
     let newSection = sectionArr.map((section) => {
       section.fields.sort((a, b) => a.rank - b.rank);
       let newFiledsArr = JSON.parse(JSON.stringify(section.fields));
         for(let i = 0; i < section.fields.length; i++){
           let fieldGroupObj = {};
           fieldGroupObj.component = "field_group";
-          fieldGroupObj.header = "header";
+          fieldGroupObj.header = section.fields[i].store;
           fieldGroupObj.id = "request";
           fieldGroupObj.fields = [];
           for(let j = i; j < section.fields.length; j++){
@@ -384,6 +384,7 @@ function App() {
       return section;
     });
     console.log("newSection--------", newSection);
+  
   };
 
   return (
