@@ -5,6 +5,33 @@
     "namespace": {
       "type": "string"
     },
+    "namespace1": {
+      "type": "string"
+    },
+    "namespace2": {
+      "type": "string"
+    },
+    "namespace3": {
+      "type": "string"
+    },
+    "namespace4": {
+      "type": "string"
+    },
+    "namespace5": {
+      "type": "string"
+    },
+    "namespace6": {
+      "type": "string"
+    },
+    "namespace7": {
+      "type": "string"
+    },
+    "namespace8": {
+      "type": "string"
+    },
+    "namespace9": {
+      "type": "string"
+    },
     "secretProviderClass": {
       "type": "object",
       "properties": {
@@ -20,6 +47,9 @@
                 "type": "string"
               },
               "thirdField": {
+                "type": "string"
+              },
+              "fourthField": {
                 "type": "string"
               }
             }

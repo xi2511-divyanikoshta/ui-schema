@@ -1,0 +1,16 @@
+.toggleGroup{
+    border: 1px solid #0099FC !important; 
+    .MuiToggleButton-root{
+        background-color:#ffffff !important;
+        border-top: none !important;
+    border-bottom: none !important;
+    border-right: none !important;
+    }
+    .MuiToggleButton-root.Mui-selected {
+    color: #0099FC !important; 
+    background: rgba(0, 153, 252, 0.1) !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    
+  }
+}

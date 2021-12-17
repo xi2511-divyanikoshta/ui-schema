@@ -1,0 +1,21 @@
+.autocompleteClass {
+    .MuiTextField-root {
+        .MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"] {
+            padding-left: 0px !important;
+            padding-top: 0px !important;
+            padding-bottom: 0px !important;
+            .MuiAutocomplete-tag {
+                border-radius: 4px;
+                margin-top: 8px;
+                background-color: #e7f1fe;
+                color: #0c2c5e;
+                font-family: "RobotoMedium";
+                font-size: 0.8rem;
+                font-weight: 500;
+            }
+            .MuiChip-root {
+                height: 29px;
+            }
+        }
+    }
+}
